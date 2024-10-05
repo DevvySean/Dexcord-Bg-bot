@@ -1,7 +1,11 @@
 import openai
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 def analyze_blood_sugar_trends(readings, time_range='24h'):
     reading_summary = "\n".join([f"Time: {reading['timestamp']}, Blood Sugar: {reading['blood_glucose_value']}, Trend: {reading['description']}" for reading in readings])
