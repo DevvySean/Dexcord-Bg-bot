@@ -4,3 +4,5 @@
 /.venv
 /dist
 *.spec
+.env
+test_main.py
