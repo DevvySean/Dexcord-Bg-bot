@@ -6,3 +6,4 @@
 *.spec
 .env
 test_main.py
+blood_sugar.db
