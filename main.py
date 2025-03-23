@@ -50,14 +50,14 @@ async def bloodAlert():
             bloodDescription = dexcom.get_current_glucose_reading().trend_description
         
             # If bloods are less than or equal to 6 we will alert in the channel
-            if glucose_reading <= 6:
+            if glucose_reading <= 6 and glucose_reading > 5:
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
                 session.add(new_reading)
                 session.commit()
                 await channel.send(f"**Blood Sugar's Are** - {glucose_reading}" + " " + bloodArrowDirection + " " + bloodDescription)
 
             # If bloods are less than or equal to 5 we will alert and ping the user
-            elif glucose_reading <= 5:
+            elif glucose_reading <= 5.0:
                 
                 timer = 300
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
@@ -66,14 +66,14 @@ async def bloodAlert():
                 await channel.send(f"**LOW BLOODS!** - {glucose_reading}" + " " + bloodArrowDirection + " " + bloodDescription + "<@228673848118083584> <@500791793541971980>")
             
             # If bloods are greater than or equal to 16 we will alert in the channel
-            elif glucose_reading >= 16:
+            elif glucose_reading >= 16.0 and glucose_reading < 20:
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
                 session.add(new_reading)
                 session.commit()
                 await channel.send(f"**Bloods Are Higer Than Normal!** - {glucose_reading}" + " " + bloodArrowDirection + " " + bloodDescription)
 
             # If bloods are greater than or equal to 20 we will alert and ping the user
-            elif glucose_reading >= 20:
+            elif glucose_reading >= 20.0:
                 timer = 300
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
                 session.add(new_reading)
