@@ -112,36 +112,23 @@ async def trends(ctx, time_range='24h'):
     await ctx.send(f"**Blood Sugar Trends for the last {time_range}:**\n{trends_analysis}")
 
 
-
 @bot.command()
 async def bg(ctx):
-
-    dexcom = Dexcom(os.getenv('DEXCOM_USERNAME'), os.getenv('DEXCOM_PASSWORD'), ous=True) # ous=True if outside of US
-    glucose_reading = dexcom.get_current_glucose_reading().mmol_l
-    bloodArrowDirection = dexcom.get_current_glucose_reading().trend_arrow
-    bloodDescription = dexcom.get_current_glucose_reading().trend_description
-    
-
-    if glucose_reading <= 5:
-
+    try:
+        dexcom = Dexcom(os.getenv('DEXCOM_USERNAME'), os.getenv('DEXCOM_PASSWORD'), ous=True) # ous=True if outside of US
+        glucose_reading = dexcom.get_current_glucose_reading().mmol_l
+        bloodArrowDirection = dexcom.get_current_glucose_reading().trend_arrow
+        bloodDescription = dexcom.get_current_glucose_reading().trend_description
         await ctx.send(str(glucose_reading) +  " " + bloodArrowDirection + ". They are currently " + bloodDescription)
         new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
         session.add(new_reading)
         session.commit()
     
-    elif glucose_reading >= 5.1 and glucose_reading < 10:
+    except AttributeError as e:
+        await ctx.send(f"Error - Unable to get bg data! {str(e)}")
 
-        await ctx.send(str(glucose_reading) +  " " + bloodArrowDirection + ". They are currently " + bloodDescription)
-        new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
-        session.add(new_reading)
-        session.commit()
-
-    else:
-
-        await ctx.send(str(glucose_reading) +  " " + bloodArrowDirection + ". They are currently " + bloodDescription)
-        new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
-        session.add(new_reading)
-        session.commit()
+    except JSONDecodeError as e:
+        await ctx.send(f"Error - JSONDecodeError! {str(e)}")
 
         
 
