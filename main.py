@@ -66,14 +66,14 @@ async def bloodAlert():
                 await channel.send(f"**LOW BLOODS!** - {glucose_reading}" + " " + bloodArrowDirection + " " + bloodDescription + "<@228673848118083584> <@500791793541971980>")
             
             # If bloods are greater than or equal to 16 we will alert in the channel
-            elif glucose_reading >= 16.0 and glucose_reading < 20:
+            elif glucose_reading >= 16 and glucose_reading < 20:
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
                 session.add(new_reading)
                 session.commit()
                 await channel.send(f"**Bloods Are Higer Than Normal!** - {glucose_reading}" + " " + bloodArrowDirection + " " + bloodDescription)
 
             # If bloods are greater than or equal to 20 we will alert and ping the user
-            elif glucose_reading >= 20.0:
+            elif glucose_reading >= 20:
                 timer = 300
                 new_reading = BloodSugar(blood_glucose_value=glucose_reading, blood_description=bloodDescription, timestamp=datetime.now())
                 session.add(new_reading)
