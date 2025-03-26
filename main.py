@@ -10,6 +10,8 @@ from requests.exceptions import JSONDecodeError
 from bot.data_fetcher import get_readings_from_db
 from bot.openai_analyzer import analyze_blood_sugar_trends
 from bot.models import BloodSugar, engine 
+import socket
+from aiohttp import ClientConnectorError
 
 load_dotenv()
 
@@ -132,5 +134,20 @@ async def bg(ctx):
 
         
 
-bot.run(os.getenv('DISCORD_TOKEN'))
+async def start_bot():
+    while True:
+        try:
+            await bot.start(os.getenv('DISCORD_TOKEN'))
+        except (ClientConnectorError, socket.gaierror) as e:
+            print(f"Network error: {e}. Reconnecting in 10 seconds...")
+            await asyncio.sleep(10)
+        except discord.errors.ConnectionClosed as e:
+            print(f"WebSocket closed: {e}. Attempting reconnect...")
+            await asyncio.sleep(5)
+        except Exception as e:
+            print(f"Unexpected error: {e}. Restarting in 15 seconds...")
+            await asyncio.sleep(15)
+
+if __name__ == "__main__":
+    asyncio.run(start_bot())
 
